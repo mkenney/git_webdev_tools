@@ -14,6 +14,7 @@ Installation
 1. Add this project as a submodule at the root of your web project with a path of git-webdev-tools
 
         $> git submodule add https://github.com/mkenney/git_webdev_tools.git git-webdev-tools
+        $> git submodule init && git submodule update
 
 2. Copy the devsetup scripts to the root of your project and add them
 
