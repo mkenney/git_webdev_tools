@@ -36,7 +36,7 @@ Installation
    1. init any submodules and checkout the current commit unless they contain uncommitted
    changes.
    2. Add this project as a submodule if it doesn't exist already, so really all you need is the devsetup.sh
-   script, running it covers all of the previous installation steps.
+   script and conf file, running it covers installation steps 1 and 2.
    3. Update itself from the latest master and re-run itself
    4. Install a git pre-commit hook that
        * Runs PHP Code Sniffer on all PHP files
