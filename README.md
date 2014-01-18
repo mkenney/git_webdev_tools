@@ -34,6 +34,9 @@ Installation
    This will clone my_awesome_project and put it in the my/awesome/path folder whenever devsetup.sh is
    run.  It does not add it as a submodule.  Be sure to increment the array key for each new project!
 
+4. Run the devsetup script
+
+        $> ./devsetup.sh
 
 https://github.com/mkenney/git_webdev_tools.git
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 file=$1
 echo -e "Compiling ${file:0:${#file}-3}min.css... \c"
-java -jar ./build-tools/yuicompressor-2.4.8.jar $1 -o ${file:0:${#file}-3}min.css
+java -jar ./git-webdev-tools/yuicompressor-2.4.8.jar $1 -o ${file:0:${#file}-3}min.css
 git add ${file:0:${#file}-3}min.css
 echo Done.
