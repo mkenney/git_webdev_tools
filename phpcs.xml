@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset name="Return Path PHP Coding Standards (EIS)">
+
+    <!--
+        The name attribute of the ruleset tag is displayed
+        when running PHP_CodeSniffer with the -v command line
+        argument. The description tag below is not displayed anywhere
+        except in this file, so it can contain information for
+        developers who may change this file in the future.
+    -->
+    <description>Return Path PHP Coding Standards (EIS)</description>
+
+    <!--
+        Include some specific sniffs from the Squiz standard.
+    -->
+    <rule ref="Squiz.ControlStructures.ControlSignature">
+        <severity>4</severity>
+    </rule>
+    <rule ref="Squiz.ControlStructures.ElseIfDeclaration.NotAllowed">
+        <severity>2</severity>
+    </rule>
+    <!-- rule ref="Squiz.ControlStructures.SwitchDeclaration" / -->
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
+    <rule ref="Squiz.WhiteSpace.SemicolonSpacing" />
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace" />
+    <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore">
+        <severity>1</severity>
+    </rule>
+
+    <!--
+        Include some specific sniffs from the Generic standard.
+    -->
+    <!-- <rule ref="Generic.ControlStructures.InlineControlStructure"/> -->
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+    <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
+    <rule ref="Generic.NamingConventions.ConstructorName"/>
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+    <rule ref="Generic.PHP.DeprecatedFunctions"/>
+    <rule ref="Generic.PHP.ForbiddenFunctions"/>
+    <rule ref="Generic.PHP.NoSilencedErrors"/>
+	<!-- <rule ref="Generic.WhiteSpace.DisallowTabIndent"/> -->
+
+    <!--
+        Another useful example of changing sniff settings is
+        to specify the end of line character that your standard
+        should check for.
+    -->
+    <rule ref="Generic.Files.LineEndings">
+        <properties>
+            <property name="eolChar" value="\n"/>
+        </properties>
+    </rule>
+
+</ruleset>

@@ -1,0 +1,6 @@
+#!/bin/bash
+file=$1
+echo -e "Compiling ${file:0:${#file}-2}min.js... \c"
+java -jar ./build-tools/jscompiler.jar --warning_level=QUIET --language_in=ECMASCRIPT5 --js $1 > ${file:0:${#file}-2}min.js
+git add ${file:0:${#file}-2}min.js
+echo Done.

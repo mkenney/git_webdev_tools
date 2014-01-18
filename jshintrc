@@ -1,0 +1,33 @@
+{
+	"laxbreak": true
+	, "laxcomma": true
+	, "undef": true
+	, "unused": true
+	, "globalstrict": true
+	, "strict": true
+	, "devel": true
+	, "globals": {
+		"window": false
+		, "$UI": false
+		, "document": false
+		, "console": false
+		, "jQuery": false
+		, "pageTracker": false
+		, "setTimeout": false
+		, "$": false
+		, "Backbone_Divtable": false
+		, "$Logger": false
+		, "APP_VIEW": false
+		, "check_eligibility": false
+		, "CALC_THRESHOLDS": false
+		, "calculateEligibility": false
+		, "clearTimeout": false
+		, "COMPLIANCE_THRESHOLDS": false
+		, "ENFORCEMENT_THRESHOLDS": false
+		, "PERFORMANCE_THRESHOLDS": false
+		, "_": false
+		, "Backbone": false
+		, "RP_Divtable": false
+		, "RP": false
+	}
+}

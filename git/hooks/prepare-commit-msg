@@ -1,0 +1,29 @@
+#!/bin/bash
+###############################################################################
+# File         : prepare-commit-msg
+# Input values : .git/COMMIT_EDITMSG
+# Purpose      : Dumps the output of the pre-commit hook into the commit msg
+#                body.
+###############################################################################
+
+if [ -n "${GIT_PRECH_SKIP-}" ]; then
+    exit 0;
+fi
+
+PERL=$(command -v perl)
+
+# =============================================================================
+# Independent variables
+# =============================================================================
+CS_DIR=${GIT_DIR}/../test/checkstyles
+GIT_PRECH_OUTPUT_FILE=/tmp/git_pre_commit_output.txt
+
+# =============================================================================
+# Run
+# =============================================================================
+if [[ -x "$PERL" && -e $GIT_PRECH_OUTPUT_FILE ]]; then
+    echo '#' >> "$1"
+    echo '# pre-commit hook output' >> "$1"
+    echo '# ----------------------' >> "$1"
+    ${PERL} -np -e 's/^/# /' $GIT_PRECH_OUTPUT_FILE >> "$1"
+fi

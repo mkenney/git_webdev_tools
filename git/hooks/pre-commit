@@ -1,0 +1,229 @@
+#!/bin/bash
+
+repository_path=$(cd `dirname "${GIT_DIR}"` && pwd -P)
+
+
+#
+# PHP Code Sniffer
+#
+echo
+echo
+echo "     Validating PHP code (set lint=php or lint=all to force validation):"
+echo ================================================================================
+
+PHP=$(command -v php)
+PHPCS=$(command -v phpcs)
+PHPCS_RULES=${repository_path}/build-tools/phpcs.xml
+PHPCS_ERROR=0
+
+# Is phpcs installed?
+if [ ! -x "$PHPCS" ]; then
+	echo "\tPHP CodeSniffer (phpcs) not avaliable"
+	echo "\tskipping phpcs for all php files"
+
+# Have phpcs rules?
+elif [ ! -e "$PHPCS_RULES" ]; then
+	echo "\tPHP CodeSniffer rules not avaliable ${PHPCS_RULES}"
+	echo "\tskipping phpcs for all php files"
+
+# Run phpcs
+else
+	# Validate all PHP files
+	if [ "$lint" == "php" ] || [ "$lint" == "all" ]; then
+		file_list="$(git ls-files | command grep "\.php")"
+		while read -r file; do
+			if [ ! -z "$file" ] && [[ -x "$PHP" ]]; then
+				${PHP} -l $file
+				exit_code=$?
+				if [ "$exit_code" != "0" ]; then
+					PHPCS_ERROR=1
+				elif [ -x "$PHPCS" ]; then
+					$PHPCS --standard=${PHPCS_RULES} $file
+					exit_code=$?
+					if [ "$exit_code" != "0" ]; then
+						PHPCS_ERROR=1
+					fi
+				fi
+			fi
+		done <<< "$(git ls-files | command grep "\.php")"
+	else
+		while read -r file ; do
+			if [ ! -z "$file" ] && [[ -x "$PHP" ]]; then
+				${PHP} -l $file
+				exit_code=$?
+				if [ "$exit_code" != "0" ]; then
+					PHPCS_ERROR=1
+				elif [ -x "$PHPCS" ]; then
+					$PHPCS --standard=${PHPCS_RULES} $file
+					exit_code=$?
+					if [ "$exit_code" != "0" ]; then
+						PHPCS_ERROR=1
+					fi
+				fi
+			fi
+		done <<< "$(git diff --cached --name-only --diff-filter=ACM | command grep "\.php$")"
+	fi
+fi
+if [ "${PHPCS_ERROR}" -ne "0" ]; then
+	echo
+	echo "********************************************************************************"
+	echo "*                                                                              *"
+	echo "*   PHP validation failed.  Please review the results and update accordingly   *"
+	echo "*                                                                              *"
+	echo "********************************************************************************"
+fi
+
+
+#
+# Javascript lint (jshint)
+#
+echo
+echo
+echo
+echo "     Validating Javascript code (set lint=js or lint=all to force validation):"
+echo ================================================================================
+
+JSHINT_ERROR=0
+
+# Validate all Javascript files
+if [ ! -x "$(command -v jshint)" ]; then
+	echo "jshint executable not found.  To install:"
+	echo "    > sudo yum install nodejs"
+	echo "    > sudo npm install jshint -g"
+
+elif [ "$lint" == "js" ] || [ "$lint" == "all" ]; then
+	while read -r line ; do
+		if [ ! -z "$line" ]; then
+			echo -e "$line... \c"
+			jshint --config=$repository_path/build-tools/jshintrc $line
+			exit_code=$?
+			if [ "$exit_code" != "0" ]; then
+				JSHINT_ERROR=1
+			fi
+			echo Done.
+		fi
+	done <<< "$(git ls-files | command grep "\.js$" | command grep -v "\.min\.js")"
+else
+	while read -r line ; do
+		if [ ! -z "$line" ]; then
+			echo -e "$line... \c"
+			jshint --config=$repository_path/build-tools/jshintrc $line
+			exit_code=$?
+			if [ "$exit_code" != "0" ]; then
+				JSHINT_ERROR=1
+			fi
+			echo Done.
+		fi
+	done <<< "$(git diff --cached --name-only --diff-filter=ACM | command grep "\.js$" | command grep -v "\.min\.js$")"
+fi
+if [ "${JSHINT_ERROR}" -ne "0" ]; then
+	echo
+	echo "***************************************************************************************"
+	echo "*                                                                                     *"
+	echo "*   Javascript validation failed.  Please review the results and update accordingly   *"
+	echo "*                                                                                     *"
+	echo "***************************************************************************************"
+fi
+
+
+#
+# Minify Javascript
+#
+echo
+echo
+echo
+echo "     Minifying Javascript files (set min=js or min=all to force compliation):"
+echo ================================================================================
+
+JSMIN_ERROR=0
+
+# Minify all JS files
+if [ "$min" == "js" ] || [ "$min" == "all" ]; then
+	while read -r line ; do
+		if [ ! -z "$line" ]; then
+			./build-tools/minifyjs $line
+			exit_code=$?
+			if [ "$exit_code" != "0" ]; then
+				JSMIN_ERROR=1
+			else
+				command git add ${line:0:${#line}-2}min.js
+			fi
+		fi
+	done <<< "$(git ls-files | command grep "\.js$" | command grep -v "\.min\.js$")"
+# Minify modified JS files
+else
+	while read -r line ; do
+		if [ ! -z "$line" ]; then
+			./build-tools/minifyjs $line
+			exit_code=$?
+			if [ "$exit_code" != "0" ]; then
+				JSMIN_ERROR=1
+			else
+				command git add ${line:0:${#line}-2}min.js
+			fi
+		fi
+	done <<< "$(git diff --cached --name-only --diff-filter=ACM | command grep "\.js$" | command grep -v "\.min\.js$")"
+fi
+if [ "${JSMIN_ERROR}" -ne "0" ]; then
+	echo
+	echo "****************************************************************************************"
+	echo "*                                                                                      *"
+	echo "*   Javascript compilation failed.  Please review the results and update accordingly   *"
+	echo "*                                                                                      *"
+	echo "****************************************************************************************"
+fi
+
+
+#
+# Minify Stylesheets
+#
+echo
+echo
+echo
+echo "     Minifying CSS files (set min=css or min=all to force compliation):"
+echo ================================================================================
+
+CSSMIN_ERROR=0
+
+# Minify all CSS files
+if [ "$min" == "css" ] || [ "$min" == "all" ]; then
+	while read -r line ; do
+		if [ ! -z "$line" ]; then
+			./build-tools/minifycss $line
+			exit_code=$?
+			if [ "$exit_code" != "0" ]; then
+				CSSMIN_ERROR=1
+			else
+				command git add ${line:0:${#line}-3}min.css
+			fi
+		fi
+	done <<< "$(git ls-files | command grep "\.css$" | command grep -v "\.min\.css$")"
+# Minify modified CSS files
+else
+	while read -r line ; do
+		if [ ! -z "$line" ]; then
+			./build-tools/minifycss $line
+			exit_code=$?
+			if [ "$exit_code" != "0" ]; then
+				CSSMIN_ERROR=1
+			else
+				command git add ${line:0:${#line}-3}min.css
+			fi
+		fi
+	done <<< "$(git diff --cached --name-only --diff-filter=ACM | command grep "\.css$" | command grep -v "\.min\.css$")"
+fi
+if [ "${CSSMIN_ERROR}" -ne "0" ]; then
+	echo
+	echo "****************************************************************************************"
+	echo "*                                                                                      *"
+	echo "*   Stylesheet compilation failed.  Please review the results and update accordingly   *"
+	echo "*                                                                                      *"
+	echo "****************************************************************************************"
+fi
+
+#
+# Done.
+#
+
+echo
+echo
