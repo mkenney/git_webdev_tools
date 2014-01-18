@@ -71,6 +71,7 @@ if [ "${PHPCS_ERROR}" -ne "0" ]; then
 	echo "*   PHP validation failed.  Please review the results and update accordingly   *"
 	echo "*                                                                              *"
 	echo "********************************************************************************"
+	exit 1
 fi
 
 
@@ -123,6 +124,7 @@ if [ "${JSHINT_ERROR}" -ne "0" ]; then
 	echo "*   Javascript validation failed.  Please review the results and update accordingly   *"
 	echo "*                                                                                     *"
 	echo "***************************************************************************************"
+	exit 1
 fi
 
 
@@ -171,6 +173,7 @@ if [ "${JSMIN_ERROR}" -ne "0" ]; then
 	echo "*   Javascript compilation failed.  Please review the results and update accordingly   *"
 	echo "*                                                                                      *"
 	echo "****************************************************************************************"
+	exit 1
 fi
 
 
@@ -219,6 +222,7 @@ if [ "${CSSMIN_ERROR}" -ne "0" ]; then
 	echo "*   Stylesheet compilation failed.  Please review the results and update accordingly   *"
 	echo "*                                                                                      *"
 	echo "****************************************************************************************"
+	exit 1
 fi
 
 #
